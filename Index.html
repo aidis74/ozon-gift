@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Получить подарок</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            margin-top: 50px;
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            resize: vertical;
+        }
+        button {
+            width: 100%;
+            padding: 20px;
+            font-size: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .comment {
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.4;
+            text-align: center;
+        }
+        .timer-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .timer {
+            font-size: 36px;
+            font-weight: bold;
+            color: #28a745;
+            margin: 10px 0 20px;
+            min-height: 50px;
+        }
+        .additional-timer {
+            font-size: 24px;
+            color: #666;
+            margin: 30px 0 10px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="inputContainer">
+        <h1>Получение подарка</h1>
+        <form id="mainForm">
+            <textarea 
+                id="username" 
+                placeholder="Павел, введите ваш Telegram никнейм"
+                rows="3"
+            ></textarea>
+            <button type="submit">Отправить</button>
+        </form>
+        <div class="comment">
+            Павел, введите Ваш ник в Телеграм. По истечению таймера Вам будет отправлен штрихкод для получения подарка по адресу г. Челябинск, ул. бр. Кашириных, д.76, пункт выдачи Озон. Введенные вами данные никуда передаваться не будут. И храниться тоже. В принципе, в общем и целом, ничего вообще не обязательно вводить. Можно просто нажать "Отправить".
+        </div>
+    </div>
+
+    <div class="container" id="timerContainer" style="display: none;">
+        <div class="timer-title">Подарок для Павла приедет через:</div>
+        <div class="timer" id="mainTimer"></div>
+        
+        <div class="additional-timer">До крайнего срока доставки осталось:</div>
+        <div class="timer" id="secondaryTimer"></div>
+        
+        <div class="comment">Если подарок не успеет приехать до 08.05.2025</div>
+    </div>
+
+    <script>
+        document.getElementById('mainForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('inputContainer').style.display = 'none';
+            document.getElementById('timerContainer').style.display = 'block';
+            startTimers();
+        });
+
+        function formatTime(minutes, seconds) {
+            return `${minutes} мин ${seconds} сек`;
+        }
+
+        function startTimers() {
+            const endDate1 = new Date('2025-05-08T00:00:00');
+            const endDate2 = new Date('2025-05-09T00:00:00');
+            
+            function updateTimers() {
+                const now = new Date();
+                
+                // Основной таймер (до 08.05.2025)
+                let diff1 = endDate1 - now;
+                if (diff1 <= 0) {
+                    document.getElementById('mainTimer').textContent = "Подарок уже в пути!";
+                } else {
+                    const minutes1 = Math.floor(diff1 / (1000 * 60));
+                    const seconds1 = Math.floor((diff1 % (1000 * 60)) / 1000);
+                    document.getElementById('mainTimer').textContent = formatTime(minutes1, seconds1);
+                }
+                
+                // Дополнительный таймер (до 09.05.2025)
+                let diff2 = endDate2 - now;
+                if (diff2 <= 0) {
+                    document.getElementById('secondaryTimer').textContent = "Срок доставки истёк";
+                } else {
+                    const minutes2 = Math.floor(diff2 / (1000 * 60));
+                    const seconds2 = Math.floor((diff2 % (1000 * 60)) / 1000);
+                    document.getElementById('secondaryTimer').textContent = formatTime(minutes2, seconds2);
+                }
+            }
+            
+            updateTimers();
+            setInterval(updateTimers, 1000);
+        }
+    </script>
+</body>
+</html>
